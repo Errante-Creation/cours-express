@@ -189,3 +189,56 @@ app.post('/data', (req, res) => {
 
 app.listen(3000, () => console.log('Sereur démarré sur le port 3000'))
 ```
+
+## Le principe de contrôleur et de modèle (Architecture MVC/MVT simplifiée)
+Bien qu'Express ne force pas une architecture MVC (Model-View-Controller) ou MVT (Model-View-Template) stricte, il est courant d'adoper ces principes pour organiser le code de manière logique et maintenable. Dans le contexte d'une API RESTful, la partie "View" est souvent remplacée par la sérialisation des données en JSON ou XML.
+
+### Le principe de contrôleur
+Les contrôleurs sont des fonctions ou des classes qui gèrent la logique de traitement des requêtes. Ils reçoivent les requêtes du routeur, interagissent avec les modèles pour récupérer ou manipuler les données, et envoient la réponse appropriée au client. Le côle principal d'un contrôleur est de séparer la logique métier de la logique de routage, rendant le code plus propre et plus facile à tester et à maintenir.
+
+**Exemple de contrôleur :**
+```javascript
+// controllers/produitController.js
+const Produit = require("../models/Produit") // Supposons que nous ayons un modèle Produit
+
+// Fournir tous les produits
+exports.getAllProducts = async(req, res) => {
+   try {
+      const products = await Produit.find()
+      res.json(products)
+   } catch(err){
+      res.status(500).json({ message: err.message })
+   }
+}
+
+// Créer un produit
+exports.createProduct = async (req, res) => {
+   const product = new Produit({
+      name: req.body.name,
+      price: req.body.price,
+      stock: req.body.stock
+   })
+
+   try {
+      const newProduct = await product.save()
+      res.status(201).json(newProduct)
+   } catch(err){
+      res.status(400).json({ message: err.message })
+   }
+
+}
+
+// ...autres fonctions pour getProduitById, updateProduit, deleteProduit
+```
+
+```javascript
+// routes/produits.js
+const express = require("express")
+const router = express.Router()
+const productController = require("../controllers/produitController")
+
+router.get("/", productController.getAllProducts)
+router.post("/", productController.createProduct)
+
+module.exports = router
+```
