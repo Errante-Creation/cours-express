@@ -144,3 +144,48 @@ app.listen(port, () => {
    console.log(`Serveur démarré sur http://localhost:${port}`)
 })
 ```
+
+### Les middlewares
+Les middlewares sont des fonctions qui ont accès à l'objet requête (`req`), à l'objet réponse (`res`), et à la fonction `next()` dans le cycle de requête-réponse d'une application Express. Les fonctions middleware peuvent :
+* Exécuter n'importe quel code
+* Apporter des modifications aux objets requête et réponse
+* Terminer le cycle requête-réponse
+* Appeler le prochain middleware dans la pile
+Les middlewares sont exécutés dans l'ordre où ils sont définis. Ils sont extrêmement utiles pour des tâches telles que l'analyse du corps de la requête, l'authentification, la journalisation, la gestion des erreurs, etc.
+
+**Exemples de middlewares :**
+1. **Middleware de journalisation (logging) :**
+```javascript
+// app.js
+const express = require('express')
+const app = express()
+
+// Middleware de journalisation personnalisé
+app.use((req, res, next) => {
+   console.log(`Requête reçue : ${req.method} ${req.url} à ${new Date()}`)
+   next() // Passe au prochain middleware ou à la route
+})
+
+app.get('/', (req, res)=> {
+   res.send('Accueil')
+})
+
+app.listen(3000, () => console.log('Serveur démarré sur le port 3000'))
+```
+2. **Middleware pour analyser le corps des requêtes (body-parser) :**
+Express inclut désormais des middlewares intégrés pour analyser les corps de requêtes JSON et URL-encodés.
+```javascript
+// app.js
+const express = require('express')
+const app = express()
+
+app.use(express.json()) // Middleware pour analyser les corps de requêtes JSON
+app.use(express.urlencoded({extended: true})) // Middleware pour analyser les corps de requêtes URL-encodés
+
+app.post('/data', (req, res) => {
+   console.log(req.body) // Contient les données envoyées dans le corps de la requête
+   res.send('Données reçues') 
+})
+
+app.listen(3000, () => console.log('Sereur démarré sur le port 3000'))
+```
