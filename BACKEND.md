@@ -55,3 +55,53 @@ Pour commencer avec Express.js, vous devez d'abord avoir Node.js installé sur v
    ```
    Vous devriez voir le message `Serveur démarré sur http://localhost:3000` dans votre console (ou terminal). 
    Ouvrez votre navigateur et accédez à `http://localhost:3000`. Vous devriez voir le message `Bienvenue sur votre API RESTful !`.
+
+   ## Concepts clés d'Express.js
+   Express.js est un framework flexible qui ne force pas une structure de projet particulière, mais il encourage l'organisation du code pour faciliter la maintenance et l'évolutivité. Les conceptes de routes, middlewares, contrôleurs et modèles sont fondamentaux pour structurer une application Express.
+
+   ### Les routes
+   Une route, dans Express, est une section de code qui associe une méthode HTTP (GET, POST, PUT, PATCH, DELETE), un chemin/modèle d'URL, et une ou plusieurs fonctions de rappel (handlers) qui sont exécutées lorsque la requête correspond à la route. Les routes définissent les points de terminaison de votre API et la logique à exécuter pour chaque type de requête.
+
+   **Définition d'une route :**
+   ```javascript
+   // app.js
+const express = require('express')
+const app = express()
+const port = 3000
+
+// Définition d'une route simple
+app.get('/', (req, res) => {
+   res.send('Bienvenue sur votre API RESTful !')
+})
+
+// Route GET pour récupérer tous les utilisateurs
+app.get('/utilisateurs', (req, res) => {
+   res.json(
+      [
+         { id: 1, nom: 'Alice' },
+         { id: 2, nom: 'Bob' },
+      ]
+   )
+})
+
+// Route POST pour créer un nouvel utilisateur
+app.post('/utilisateurs', (req, res) => {
+   // Logique pour créer un utilisateur
+   res.status(201).send('Utilisateur créé')
+})
+
+// Route GET avec paramètre pour récupérer un utilisateur par ID
+app.get('/utilisateurs/:id', (req, res) => {
+   const userId = req.params.id
+   res.send(`Détails de l'utilisateur : ${userId}`)
+})
+
+// Démarrage du serveur
+app.listen(port, () => {
+   console.log(`Serveur démarré sur http://localhost:${port}`)
+})
+```
+Dans l'exemple ci-dessus :
+* `app.get()`, `app.post()` sont des méthodes de routage qui correspondent aux verbes HTTP
+* `'/utilisateurs` et `'/utilisateurs/:id'` sont les chemins d'URL. Le `:id` est un paramètre de route qui peut être capturé via `req.params.id`
+* `(req, res) => { ... }` est la fonction de rappel (handler) qui gère la requête et envoie la réponse.
