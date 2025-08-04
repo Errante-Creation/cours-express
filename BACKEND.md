@@ -63,7 +63,7 @@ Pour commencer avec Express.js, vous devez d'abord avoir Node.js installé sur v
    Une route, dans Express, est une section de code qui associe une méthode HTTP (GET, POST, PUT, PATCH, DELETE), un chemin/modèle d'URL, et une ou plusieurs fonctions de rappel (handlers) qui sont exécutées lorsque la requête correspond à la route. Les routes définissent les points de terminaison de votre API et la logique à exécuter pour chaque type de requête.
 
    **Définition d'une route :**
-   ```javascript
+```javascript
    // app.js
 const express = require('express')
 const app = express()
@@ -98,10 +98,49 @@ app.get('/utilisateurs/:id', (req, res) => {
 
 // Démarrage du serveur
 app.listen(port, () => {
-   console.log(`Serveur démarré sur http://localhost:${port}`)
+   console.log(`Serveur démarré sur <http://localhost:${port}`)
 })
 ```
 Dans l'exemple ci-dessus :
 * `app.get()`, `app.post()` sont des méthodes de routage qui correspondent aux verbes HTTP
 * `'/utilisateurs` et `'/utilisateurs/:id'` sont les chemins d'URL. Le `:id` est un paramètre de route qui peut être capturé via `req.params.id`
 * `(req, res) => { ... }` est la fonction de rappel (handler) qui gère la requête et envoie la réponse.
+
+**Organisation des routes :**
+Pour des applications plus grandes, il est recommandé d'organiser les routes dans des fichiers séparés en utilisant `express.Router()`. Cela rend le code plus modulaire et maintenable.
+```javascript
+// routes/utilisateurs.js
+const express = require('express')
+const router = express.Router()
+
+router.get('/', (req, res) => {
+   res.json([{ id: 1, nom: 'Alice' }, { id: 2, nom: 'Bob' }])
+})
+
+router.post('/', (req, res) => {
+   res.status(201).send('Utilisateur créé')
+})
+
+router.get('/:id', (req, res) => {
+   const userId = req.params.id
+   res.send(`Détails de l'utilisateur : ${userId}`)
+})
+
+module.exports = router;
+```
+```javascript
+// app.js
+const express = require('express')
+const app = express()
+const port = 3000
+const utilisateursRoutes = require('./routes/utilisateurs')
+
+// Monte le routeur sur le chemin de base
+app.use('/api/utilisateurs', utilisateursRoutes)
+
+
+// Démarrage du serveur
+app.listen(port, () => {
+   console.log(`Serveur démarré sur http://localhost:${port}`)
+})
+```
