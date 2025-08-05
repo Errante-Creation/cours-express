@@ -74,7 +74,7 @@ Ensuite, dans votre fichier app.js (ou un fichier de configuration de base de do
 // app.js ou db.js
 const mongoose = require('mongoose')
 
-const dbURI = "mongodb+srv://cours2025:pass1234@cluster0.8fmj9is.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" // Utilisez les infos fournies par MongoDB Atlas
+const dbURI = "mongodb+srv://<NomUtilisateur>:<motDePasse>@cluster0.8fmj9is.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" // Utilisez les infos fournies par MongoDB Atlas
 
 mongoose.connect(dbURI)
    .then(() => console.log("Connexion à MongoDB réussie !"))
