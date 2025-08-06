@@ -139,3 +139,90 @@ exports.createNewProduct = async (req, res) => {
    }
 }
 ```
+
+## Read (Lecture de données)
+Mongoose fournit plusieurs méthodes pour lire des documents :
+* `find()` Récupère tous les documents qui correspondent aux critères de recherche. Si aucun critère n'est spécifié, il renvoie tous les documents de la collection.
+* `findById()` Récupère un document par son ID unique
+* `findOne()` Récupère le premier document qui correspond aux critères de recherche
+```javascript
+// Dans votre controller
+const Product = require('../models/products')
+
+exports.getAllProduts = async (req, res) => {
+   try {
+      const products = await Product.find()
+      res.json(products)
+   } catch (err) {
+      res.status(500).json({message: err.message})
+   }
+}
+
+exports.getProductById = async (req, res) => {
+   try {
+      const product = await Product.findById(req.params.id)
+      if(product == null){
+         res.status(404).json({message: 'Produit non trouvé'})
+      }
+      res.json(product)
+   } catch(err){
+      res.status(500).json({message: err.message})
+   }
+}
+```
+## Update (Mise à jour)
+Pour mettre à jour des documents, vous pouvez utiliser `findByIdAndUpdate()`, `updateOne()` ou `updateMany()`, ou alors utiliser simplement la méthode `save()`
+
+```javascript
+// Dans votre controller
+const Product = require('../models/products')
+
+exports.updateProduct = async (req, res) => {
+   try {
+      const product = await Product.findById(req.params.id)
+      if(product == null){
+         res.status(404).json({message: "Produit non trouvé"})
+      }
+
+      if(req.body.name != null){
+         product.name = req.body.name
+      }
+
+      if(req.body.price != null){
+         product.price = req.body.price
+      }
+
+      if(req.body.stock != null){
+         product.stock = req.body.stock
+      }
+
+      const updateProduct = await product.save()
+      res.json(updateProduct)
+
+   } catch (err){
+      res.status(400).json({message: err.message})
+   }
+}
+```
+
+## Delete (Suppression de données)
+Pour supprimer des documents, utilisez `findByIdAndDelete()` ou `deleteOne()`
+
+```javascript
+// Dans votre controller
+const Product = require('../models/products')
+
+exports.deleteProduct = async (req, res) => {
+   try {
+      const product = await Product.findById(req.params.id)
+      if(product == null){
+         res.status(404).json({ message: 'Produit non trouvé'})
+      }
+
+      await product.deleteOne()
+      res.json({message: "Produit supprimé"})
+   } catch (err){
+      res.status(500).json({ message: err.message})
+   }
+}
+```
